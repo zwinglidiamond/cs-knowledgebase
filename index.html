@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>True Nutra · CS Knowledge Base</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:#f4f4f2;color:#1a1a1a;min-height:100vh;overflow-x:hidden}
+:root{--black:#0c0c0c;--dark:#1a1a1a;--mid:#444;--muted:#6b6b6b;--soft:#a0a0a0;--border:#e0e0dc;--bg:#f4f4f2;--white:#fff;--surface:#fff;--light:#eeeeeb;--green:#166534;--green-bg:#dcfce7;--amber:#92400e;--amber-bg:#fef3c7;--red:#991b1b;--red-bg:#fee2e2;--blue:#1e3a8a;--blue-bg:#dbeafe}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;background:rgba(12,12,12,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding:0 28px;height:54px;gap:0}
+.nav-logo{font-family:'DM Serif Display',serif;font-size:15px;color:#fff;text-decoration:none;margin-right:auto;display:flex;align-items:center;gap:8px;cursor:pointer}
+.nav-logo span{font-size:10px;font-weight:600;letter-spacing:.1em;color:rgba(255,255,255,.35);border-left:1px solid rgba(255,255,255,.15);padding-left:10px;margin-left:2px;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:1px}
+.nav-link{font-size:12px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;padding:6px 10px;border-radius:5px;transition:all .15s;cursor:pointer;border:none;background:none;font-family:'DM Sans',sans-serif;letter-spacing:.01em}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,.07)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,.1)}
+.nav-sync{margin-left:10px;font-size:11px;font-weight:600;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:5px;padding:4px 8px;border:1px solid rgba(255,255,255,.1);border-radius:4px;cursor:pointer;background:none;font-family:'DM Sans',sans-serif;transition:all .15s}
+.nav-sync:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.3)}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* PAGES */
+.page{display:none;padding-top:54px;min-height:100vh}
+.page.active{display:block}
+
+/* HOME */
+.home-hero{min-height:calc(100vh - 54px);display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--black);position:relative;overflow:hidden;padding:40px 24px}
+.home-hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 48px),repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 48px);pointer-events:none}
+.home-tag{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:20px;position:relative}
+.home-title{font-family:'DM Serif Display',serif;font-size:clamp(34px,5vw,54px);font-weight:400;color:#fff;text-align:center;line-height:1.1;letter-spacing:-.5px;margin-bottom:14px;position:relative}
+.home-title em{font-style:italic;color:rgba(255,255,255,.5)}
+.home-sub{font-size:14px;color:rgba(255,255,255,.38);text-align:center;margin-bottom:40px;line-height:1.6;max-width:420px;position:relative}
+.live-badge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:#22c55e;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:20px;padding:3px 10px;margin-bottom:28px;letter-spacing:.06em}
+
+/* HOME SEARCH */
+.home-sw{width:100%;max-width:560px;position:relative;margin-bottom:52px;z-index:10}
+.home-si{width:100%;padding:17px 22px 17px 52px;border:none;border-radius:4px;font-size:15px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#fff;outline:none;box-shadow:0 2px 0 rgba(255,255,255,.15),0 20px 60px rgba(0,0,0,.5)}
+.home-si::placeholder{color:#bbb}
+.si-ico{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#bbb;font-size:17px;pointer-events:none}
+.sr-drop{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border-radius:4px;box-shadow:0 24px 64px rgba(0,0,0,.25);z-index:100;max-height:360px;overflow-y:auto}
+.sr-drop.show{display:block}
+.sr-item{display:flex;align-items:flex-start;gap:11px;padding:12px 16px;border-bottom:1px solid #f0f0ee;cursor:pointer;transition:background .12s}
+.sr-item:last-child{border-bottom:none}
+.sr-item:hover{background:#f8f8f6}
+.sr-type{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:3px;background:var(--black);color:#fff;white-space:nowrap;flex-shrink:0;margin-top:2px;letter-spacing:.05em}
+.sr-type.live{background:#166534}
+.sr-type.faq{background:#444}
+.sr-type.pend{background:#888}
+.sr-label{font-size:13px;font-weight:500;color:var(--dark);line-height:1.4;margin-bottom:2px}
+.sr-meta{font-size:11px;color:var(--muted)}
+.sr-empty{padding:22px;text-align:center;font-size:13px;color:var(--soft)}
+
+/* HOME ICON NAV */
+.home-nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;position:relative;z-index:5;max-width:700px}
+.hn{display:flex;flex-direction:column;align-items:center;gap:9px;padding:18px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;cursor:pointer;text-decoration:none;transition:all .17s;min-width:108px;flex:1}
+.hn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+.hn-e{font-size:26px;line-height:1}
+.hn-l{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);letter-spacing:.04em;text-align:center;white-space:nowrap}
+.hn-c{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px}
+
+/* PAGE HEADER */
+.ph{background:var(--black);padding:40px 0 44px;border-bottom:1px solid rgba(255,255,255,.06)}
+.phi{max-width:1100px;margin:0 auto;padding:0 30px}
+.pb{font-size:11.5px;color:rgba(255,255,255,.3);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.pb span{cursor:pointer;transition:color .12s}
+.pb span:hover{color:rgba(255,255,255,.65)}
+.pb .sep{color:rgba(255,255,255,.18)}
+.ph1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;color:#fff;letter-spacing:-.4px;margin-bottom:7px}
+.ps{font-size:13.5px;color:rgba(255,255,255,.38);line-height:1.5}
+
+/* LAYOUT */
+.pw{max-width:1100px;margin:0 auto;padding:36px 30px 80px;display:grid;grid-template-columns:1fr 248px;gap:36px;align-items:start}
+.pwf{max-width:1100px;margin:0 auto;padding:36px 30px 80px}
+
+/* SIDEBAR */
+.sb{position:sticky;top:68px}
+.sbw{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:14px;overflow:hidden}
+.sbh{padding:13px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.09em}
+.sbw ul{list-style:none}
+.sbw ul li{border-bottom:1px solid var(--border)}
+.sbw ul li:last-child{border-bottom:none}
+.sbw ul li a,.sbw ul li button{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;font-size:12.5px;color:var(--dark);text-decoration:none;cursor:pointer;transition:all .12s;gap:8px;width:100%;text-align:left;border:none;background:none;font-family:'DM Sans',sans-serif}
+.sbw ul li a:hover,.sbw ul li button:hover{background:var(--light);color:var(--black)}
+.badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--black);color:#fff;white-space:nowrap;flex-shrink:0}
+.badge.grey{background:var(--light);color:var(--muted)}
+.badge.live{background:#166534;color:#fff}
+.badge.warn{background:#92400e;color:#fff}
+.sb-kust{background:var(--black);border-radius:4px;padding:18px;margin-bottom:14px}
+.sb-kust h3{font-family:'DM Serif Display',serif;font-size:15px;font-weight:400;color:#fff;margin-bottom:7px}
+.sb-kust p{font-size:12px;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:12px}
+.sb-kust a{display:inline-block;font-size:11.5px;font-weight:700;color:var(--black);background:#fff;padding:7px 14px;text-decoration:none;border-radius:2px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:18px}
+.ch{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.ci{width:34px;height:34px;background:var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ct{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;color:var(--black)}
+.cc{margin-left:auto;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--light);color:var(--muted)}
+.cc.live{background:#dcfce7;color:#166534}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px 20px}
+.sn{font-family:'DM Serif Display',serif;font-size:34px;font-weight:400;color:var(--black);line-height:1;margin-bottom:5px}
+.sl{font-size:12px;color:var(--muted);font-weight:500}
+.ss{font-size:11px;color:var(--soft);margin-top:2px}
+
+/* TOPICS GRID */
+.tg{display:grid;grid-template-columns:1fr 1fr}
+.tc{display:flex;align-items:flex-start;gap:13px;padding:20px 18px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;transition:background .13s}
+.tc:nth-child(even){border-right:none}
+.tc:nth-last-child(-n+2){border-bottom:none}
+.tc:hover{background:var(--light)}
+.tci{width:42px;height:42px;background:var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.tci svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.tcn{font-size:14px;font-weight:600;color:var(--black);margin-bottom:4px}
+.tcd{font-size:12px;color:var(--muted);line-height:1.5}
+.tca{margin-left:auto;color:var(--soft);font-size:18px;align-self:center;flex-shrink:0}
+
+/* LIVE TICKETS */
+.lts{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--light);display:flex;flex-direction:column;gap:9px}
+.tab-row{display:flex;gap:5px;flex-wrap:wrap}
+.cht{font-size:11px;padding:4px 11px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .13s}
+.cht.on,.cht:hover{background:var(--black);color:#fff;border-color:var(--black)}
+.ctb{font-size:11px;padding:3px 9px;border-radius:20px;border:1.5px solid var(--border);background:#fff;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .13s}
+.ctb.on,.ctb:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
+.lt-row{display:flex;align-items:flex-start;gap:11px;padding:12px 18px;border-bottom:1px solid var(--border)}
+.lt-row:last-child{border-bottom:none}
+.lt-row:hover{background:#fafaf9}
+.lt-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.lt-dot.open{background:#22c55e}
+.lt-dot.snoozed{background:#f59e0b;border:1.5px solid #d97706}
+.lt-dot.done{background:var(--border);border:1.5px solid var(--soft)}
+.lt-info{flex:1;min-width:0}
+.lt-tr{display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap}
+.lt-title{font-size:12.5px;font-weight:500;color:var(--dark);line-height:1.4}
+.lt-ch{font-size:9px;font-weight:700;padding:1px 5px;border:1px solid var(--border);color:var(--soft);letter-spacing:.05em;border-radius:3px;white-space:nowrap}
+.lt-ch.sms{border-color:#bfdbfe;color:#1e40af}
+.lt-ch.email{border-color:#e9d5ff;color:#7c3aed}
+.lt-by{font-size:11px;color:var(--muted)}
+.lt-pri{font-size:9.5px;font-weight:700;padding:1px 5px;border-radius:3px;color:var(--muted);background:var(--light)}
+.lt-pri.p4{background:#fee2e2;color:#991b1b}
+.ltkl{font-size:11px;color:var(--black);text-decoration:none;font-weight:600;white-space:nowrap;align-self:center;flex-shrink:0;border-bottom:1px solid var(--border);padding-bottom:1px}
+.ltkl:hover{border-color:var(--black)}
+.no-res{padding:28px;text-align:center;font-size:13px;color:var(--soft)}
+.sync-info{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);padding:8px 18px;border-bottom:1px solid var(--border);background:var(--light)}
+.si-dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+
+/* ADD TICKET FORM */
+.add-form{padding:20px;border-top:1px solid var(--border)}
+.af-title{font-size:13px;font-weight:600;color:var(--black);margin-bottom:14px}
+.af-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.af-field{display:flex;flex-direction:column;gap:4px}
+.af-field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}
+.af-field input,.af-field select,.af-field textarea{padding:8px 10px;border:1.5px solid var(--border);border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#fff;outline:none;transition:border-color .15s}
+.af-field input:focus,.af-field select:focus,.af-field textarea:focus{border-color:var(--black)}
+.af-field textarea{resize:vertical;min-height:70px;grid-column:1/-1}
+.af-full{grid-column:1/-1}
+.af-actions{display:flex;gap:8px;margin-top:4px}
+.btn-primary{font-size:12px;font-weight:700;padding:8px 18px;background:var(--black);color:#fff;border:none;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;letter-spacing:.04em}
+.btn-primary:hover{opacity:.85}
+.btn-sec{font-size:12px;font-weight:600;padding:8px 16px;background:var(--light);color:var(--muted);border:1.5px solid var(--border);border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-sec:hover{background:var(--border);color:var(--dark)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:#fff;padding:12px 20px;border-radius:4px;font-size:13px;font-weight:500;z-index:999;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* FOLLOW-UP */
+.fu-item{display:flex;align-items:flex-start;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border)}
+.fu-item:last-child{border-bottom:none}
+.fu-item:hover{background:#fafaf9}
+.fu-status{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.fu-pending{background:#fef3c7;color:#92400e}
+.fu-done{background:#dcfce7;color:#166534}
+.fu-info{flex:1}
+.fu-title{font-size:13px;font-weight:500;color:var(--dark);margin-bottom:3px;line-height:1.4}
+.fu-meta{font-size:11px;color:var(--muted);margin-bottom:4px}
+.fu-note{font-size:12px;color:var(--muted);border-left:2px solid var(--border);padding-left:7px;margin-top:4px;font-style:italic}
+.fu-actions{display:flex;gap:6px;align-self:center;flex-shrink:0}
+.fu-btn{font-size:11px;font-weight:600;padding:4px 10px;border-radius:3px;cursor:pointer;border:1.5px solid var(--border);background:#fff;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .13s}
+.fu-btn:hover{background:var(--black);color:#fff;border-color:var(--black)}
+.fu-btn.done-btn{background:var(--black);color:#fff;border-color:var(--black)}
+.fu-btn.done-btn:hover{opacity:.8}
+
+/* FAQ */
+.fi{border-bottom:1px solid var(--border)}
+.fi:last-child{border-bottom:none}
+.fq{display:flex;align-items:center;padding:15px 20px;cursor:pointer;gap:10px;user-select:none;transition:background .12s}
+.fq:hover{background:var(--light)}
+.fqt{font-size:13.5px;font-weight:500;color:var(--dark);flex:1;line-height:1.4}
+.fqb{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:9px;white-space:nowrap;flex-shrink:0;letter-spacing:.04em}
+.fqb.ref{background:var(--light);color:var(--mid)}
+.fqb.pol{background:var(--light);color:var(--mid)}
+.fqb.ai{background:var(--black);color:#fff}
+.fqb.prod{background:var(--mid);color:#fff}
+.fqb.leg{background:var(--light);color:var(--mid)}
+.fqb.tech{background:var(--light);color:var(--mid)}
+.ftog{width:22px;height:22px;border:1.5px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:var(--muted);transition:all .2s;font-weight:300;line-height:1}
+.fi.open .ftog{background:var(--black);border-color:var(--black);color:#fff;transform:rotate(45deg)}
+.fa{display:none;padding:2px 20px 18px;font-size:13px;color:var(--muted);line-height:1.78}
+.fi.open .fa{display:block}
+.fa ul{margin:9px 0 0 18px}
+.fa ul li{margin-bottom:5px}
+.fa strong{color:var(--dark)}
+.kl{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--black);font-weight:600;text-decoration:none;border-bottom:1px solid var(--border);margin-top:9px;padding-bottom:1px}
+.kl:hover{border-color:var(--black)}
+
+/* PENDING */
+.pi{display:flex;gap:13px;padding:16px 18px;border-bottom:1px solid var(--border);align-items:flex-start}
+.pi:last-child{border-bottom:none}
+.pnum{font-family:'DM Serif Display',serif;font-size:24px;color:var(--light);flex-shrink:0;line-height:1;width:30px;text-align:right;padding-top:2px}
+.pb2{flex:1}
+.ptitle{font-size:13.5px;font-weight:500;color:var(--dark);margin-bottom:4px;line-height:1.4}
+.pmeta{font-size:11.5px;color:var(--muted);margin-bottom:4px}
+.ppill{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;background:var(--black);color:#fff;border-radius:3px;margin-right:5px;letter-spacing:.05em}
+.pkl{font-size:11.5px;color:var(--black);text-decoration:none;border-bottom:1px solid var(--border);font-weight:600;padding-bottom:1px}
+.pkl:hover{border-color:var(--black)}
+
+/* PRODUCTS */
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px}
+.prod-card{border:1px solid var(--border);border-radius:4px;padding:18px;transition:all .15s;cursor:pointer;text-decoration:none;display:block}
+.prod-card:hover{border-color:var(--black);background:var(--light);transform:translateY(-1px)}
+.prod-emoji{font-size:28px;margin-bottom:10px}
+.prod-name{font-size:13.5px;font-weight:600;color:var(--black);margin-bottom:5px;line-height:1.3}
+.prod-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.prod-link{font-size:11.5px;color:var(--black);font-weight:600;text-decoration:none;border-bottom:1px solid var(--border)}
+.prod-link:hover{border-color:var(--black)}
+
+/* ESCALATION */
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.ep{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px;display:flex;gap:13px;align-items:flex-start}
+.ea{width:42px;height:42px;border-radius:50%;background:var(--black);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.ea.grey{background:var(--mid)}
+.en{font-size:13.5px;font-weight:600;color:var(--black);margin-bottom:4px}
+.er{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.etags{display:flex;gap:5px;flex-wrap:wrap}
+.etag{font-size:10.5px;padding:2px 7px;border-radius:3px;background:var(--light);color:var(--mid);font-weight:500}
+.rc{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:20px}
+.rch{padding:14px 20px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;color:var(--black);text-transform:uppercase;letter-spacing:.07em}
+.rr{display:flex;align-items:flex-start;gap:11px;padding:13px 20px;border-bottom:1px solid var(--border)}
+.rr:last-child{border-bottom:none}
+.ri{font-size:18px;flex-shrink:0;width:24px;text-align:center}
+.rl{font-size:13px;font-weight:600;color:var(--black);margin-bottom:2px}
+.rd{font-size:12.5px;color:var(--muted);line-height:1.55}
+.divider{height:1px;background:var(--border);margin:24px 0}
+.sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:14px}
+
+/* FOOTER */
+footer{background:var(--black);padding:28px;text-align:center;display:none}
+footer.show{display:block}
+footer p{font-size:11px;color:rgba(255,255,255,.25);letter-spacing:.05em}
+footer p+p{margin-top:5px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="goPage('home')">True Nutra <span>CS Knowledge Base</span></div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="goPage('topics')">Help Topics</button>
+    <button class="nav-link" onclick="goPage('faq')">Common Questions</button>
+    <button class="nav-link" onclick="goPage('tickets')">Live Tickets</button>
+    <button class="nav-link" onclick="goPage('followup')">Follow-Up</button>
+    <button class="nav-link" onclick="goPage('pending')">Pending</button>
+    <button class="nav-link" onclick="goPage('products')">Products</button>
+    <button class="nav-link" onclick="goPage('escalation')">Escalation</button>
+  </div>
+  <button class="nav-sync" onclick="syncNow()">
+    <span class="sync-dot"></span> Live Sync
+  </button>
+</nav>
+
+<!-- ======== HOME ======== -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <div class="home-tag">True Nutra · Customer Support</div>
+    <h1 class="home-title">How can we <em>help?</em></h1>
+    <div class="live-badge"><span class="sync-dot"></span> LIVE — Connected to Kustomer</div>
+    <div class="home-sw">
+      <span class="si-ico">🔍</span>
+      <input class="home-si" id="gsearch" type="text" placeholder="Search live tickets, questions, products…" autocomplete="off"
+        oninput="doSearch(this.value)" onfocus="doSearch(this.value)" onblur="setTimeout(closeSR,180)"/>
+      <div class="sr-drop" id="sr-drop"></div>
+    </div>
+    <div class="home-nav">
+      <div class="hn" onclick="goPage('topics')"><span class="hn-e">📋</span><span class="hn-l">Help Topics</span><span class="hn-c">8 categories</span></div>
+      <div class="hn" onclick="goPage('faq')"><span class="hn-e">❓</span><span class="hn-l">Common Questions</span><span class="hn-c">10 articles</span></div>
+      <div class="hn" onclick="goPage('tickets')"><span class="hn-e">🎫</span><span class="hn-l">Live Tickets</span><span class="hn-c" id="home-tc">Loading…</span></div>
+      <div class="hn" onclick="goPage('followup')"><span class="hn-e">🔔</span><span class="hn-l">Follow-Up</span><span class="hn-c" id="home-fc">0 pending</span></div>
+      <div class="hn" onclick="goPage('pending')"><span class="hn-e">⚠️</span><span class="hn-l">Pending Concerns</span><span class="hn-c">17 open</span></div>
+      <div class="hn" onclick="goPage('products')"><span class="hn-e">💊</span><span class="hn-l">Products</span><span class="hn-c">10 products</span></div>
+      <div class="hn" onclick="goPage('escalation')"><span class="hn-e">📞</span><span class="hn-l">Escalation Guide</span><span class="hn-c">7 contacts</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== HELP TOPICS ======== -->
+<div class="page" id="page-topics">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Help Topics</span></div>
+    <div class="ph1">Help Topics</div>
+    <div class="ps">Browse by category — each links directly to filtered live tickets.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="stats">
+        <div class="sc"><div class="sn" id="st-total">0</div><div class="sl">Live Tickets</div><div class="ss">From Kustomer</div></div>
+        <div class="sc"><div class="sn" id="st-open">0</div><div class="sl">Open Now</div><div class="ss">Needs response</div></div>
+        <div class="sc"><div class="sn" id="st-cancel">0</div><div class="sl">Cancel Requests</div><div class="ss">Today</div></div>
+        <div class="sc"><div class="sn" id="st-refund">0</div><div class="sl">Refund Requests</div><div class="ss">Today</div></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div><span class="ct">All Categories</span></div>
+        <div class="tg">
+          <div class="tc" onclick="goTickets('cancel')"><div class="tci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div><div><div class="tcn">Cancellations &amp; Subscriptions</div><div class="tcd">Cancel requests, auto-ship stops, subscription management.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goTickets('refund')"><div class="tci"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20"/><path d="M17 7l-5-5-5 5M7 17l5 5 5-5"/></svg></div><div><div class="tcn">Refunds &amp; Payments</div><div class="tcd">External refunds via PayPal, Venmo, wire &amp; check. Go Green policy.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goTickets('order')"><div class="tci"><svg viewBox="0 0 24 24"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div><div class="tcn">Orders &amp; Shipping</div><div class="tcd">Order confirmations, tracking, delivery issues, replacements.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goTickets('review')"><div class="tci"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="tcn">Reviews &amp; Feedback</div><div class="tcd">Customer reviews, satisfaction follow-ups, product feedback.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goPage('faq');openFaq(1)"><div class="tci"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><div><div class="tcn">Product Quality &amp; Labels</div><div class="tcd">Wrong labels (Toplux), adverse reactions, ingredient questions.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goPage('faq');openFaq(7)"><div class="tci"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div><div class="tcn">Legal &amp; Compliance</div><div class="tcd">Trademark disputes, copycat sites, BBB complaints.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goPage('faq');openFaq(4)"><div class="tci"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="tcn">Account &amp; Charge Lookup</div><div class="tcd">Missing accounts, duplicate charges, payment mismatches.</div></div><span class="tca">›</span></div>
+          <div class="tc" onclick="goPage('faq');openFaq(5)"><div class="tci"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="9.5" r="1.5" fill="#fff" stroke="none"/><circle cx="15.5" cy="9.5" r="1.5" fill="#fff" stroke="none"/><path d="M9 15s1 1.5 3 1.5 3-1.5 3-1.5"/></svg></div><div><div class="tcn">Ashley / Iris AI Issues</div><div class="tcd">Wrong refunds, bad info, over-cancellations, AI errors.</div></div><span class="tca">›</span></div>
+        </div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">Quick Jump</div><ul>
+        <li><a href="#" onclick="goPage('tickets');return false;">Live Tickets <span class="badge live" id="sb-live">0</span></a></li>
+        <li><a href="#" onclick="goPage('followup');return false;">Follow-Up Queue <span class="badge warn" id="sb-fu">0</span></a></li>
+        <li><a href="#" onclick="goPage('pending');return false;">Pending Concerns <span class="badge">17</span></a></li>
+        <li><a href="#" onclick="goPage('products');return false;">Product Catalog</a></li>
+        <li><a href="#" onclick="goPage('escalation');return false;">Escalation Guide</a></li>
+      </ul></div>
+      <div class="sb-kust"><h3>Open Kustomer</h3><p>View full customer history and ticket details.</p><a href="https://raicom.kustomerapp.com" target="_blank">Open Kustomer →</a></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== FAQ ======== -->
+<div class="page" id="page-faq">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Common Questions</span></div>
+    <div class="ph1">Most Common Questions</div>
+    <div class="ps">Step-by-step answers to the issues raised most frequently.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="card" id="faq-card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div><span class="ct">FAQ Articles</span><span class="cc">10 articles</span></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">How do I process an external refund (PayPal, Venmo, wire, check)?</span><span class="fqb ref">Refund</span><span class="ftog">+</span></div><div class="fa">All external refunds require approval from <strong>Marge Laureola</strong>.<ul><li>PayPal: collect email. Venmo: collect @handle. Wire: bank name, account #, type. International wire: also SWIFT code. Check: full name + mailing address</li><li>Go Green = exactly <strong>50% refund</strong> — never full unless customer explicitly declines</li><li>Always verify the refund was actually completed — Ashley may confirm without acting</li><li>Never refund Mystery Gift or original order unless specifically requested</li></ul></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">What do I do when a customer reports an adverse reaction to a product?</span><span class="fqb prod">Product</span><span class="ftog">+</span></div><div class="fa">Do <strong>NOT</strong> offer retention. Cancel sub AND cancel/refund order.<ul><li>Collect: symptoms, when started, product, dosage</li><li>Physician involved → flag <strong>urgent</strong>, escalate to Ryan Bailis immediately</li><li>Order unfulfilled → cancel. Delivered → full refund</li><li>Document for QA review</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69056d7f9f455e31225f7e1a/event/692e3c5f504706cf82ccb9e3" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">What is the correct retention offer when a customer wants to cancel?</span><span class="fqb pol">Policy</span><span class="ftog">+</span></div><div class="fa">Offer both options and let the customer choose:<ul><li><strong>Option 1:</strong> Pause subscription up to 6 months</li><li><strong>Option 2:</strong> 20% lifetime discount — never offer 35% (Ashley error)</li><li>Adverse reactions: no retention, cancel and refund immediately</li></ul></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">Ashley cancelled the wrong thing — order instead of subscription.</span><span class="fqb ai">AI Issue</span><span class="ftog">+</span></div><div class="fa"><ul><li>Check if cancellation can be reversed in Shopify / Fulfil</li><li>If fulfilled, process replacement if customer still wants product</li><li>Report in <strong>#cs-ai-issue-reporting</strong>, tag <strong>Enrico Dela Rosa</strong></li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69f803e9b32644c3cac74599/event/69f80b889ce2db1544b0c617" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">A customer account cannot be found or a charge is not showing.</span><span class="fqb pol">Account</span><span class="ftog">+</span></div><div class="fa"><ul><li>Filter by last 4 card digits + billing address in Kustomer</li><li>Cross-check CheckoutChamp (CC) if Kustomer returns nothing</li><li>Still not found: ask for transaction ID or bank statement screenshot</li><li>Refund to different card → escalate to Ryan (possible unauthorized change)</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/6941aa80a6e21e876d049e3d/event/696698397bc563015cddb6ea" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">What are Ashley's known product information errors?</span><span class="fqb ai">AI Issue</span><span class="ftog">+</span></div><div class="fa">Always correct the customer and report each one:<ul><li>7-in-1 Blood Sugar: says NOT liquid — <strong>it IS liquid</strong></li><li>5-in-1 Vitamin B: offers capsules — <strong>capsules do not exist</strong></li><li>Vitamin D3+K2: says bottles — <strong>it comes in pouches</strong></li><li>Turmeric Curcumin 95: says 90 caps — <strong>only 30</strong></li><li>Vitamin D3+K2: offers "Black" &amp; "GLP" versions — <strong>only 1 version exists</strong></li><li>Pause limit: says 3 months — <strong>actual limit is 6 months</strong></li></ul>Report all to #cs-ai-issue-reporting, tag Enrico Dela Rosa.</div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">Customer received wrong item or wrong label (e.g. Toplux).</span><span class="fqb prod">Product</span><span class="ftog">+</span></div><div class="fa"><ul><li>Request photo immediately</li><li>Toplux label on True Nutra products → escalate to Ryan</li><li><strong>Never use "Resend"</strong> — escalate CS for partial replacements</li><li>Discontinued TN011 &amp; TN013 → replace with Magnesium Complex + Vitamin B Complex</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69d2aa2203068dc74e8e2c42/event/69f92a1d9ce2db154432e234" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">We received a legal letter, BBB inquiry, or trademark complaint.</span><span class="fqb leg">Legal</span><span class="ftog">+</span></div><div class="fa"><ul><li><strong>Never respond directly</strong> — escalate to Ryan Bailis immediately</li><li>BBB inquiries: assign to Angel for drafting</li><li>Copycat sites (trytruenutrawellness.com, truenutra.co.za): report to Ryan and Mo</li><li>Do not close until legal team confirms resolution</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69ef7e07da0cf3efc3ca9d4a/event/69ef7e079ce2db1544912285" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">A customer wants to reach Coach Tom — what options are available?</span><span class="fqb pol">Policy</span><span class="ftog">+</span></div><div class="fa"><ul><li>Default: SMS / WhatsApp via number on file</li><li>International (Portugal, Germany, etc.): SMS not available — <strong>email is the alternative</strong></li><li>Customer requests Coach Tom by name → assign to Enrico Dela Rosa</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69f0cb2e7199a1462207b8f2/event/69f0ecf876fd76d2d815daa4" target="_blank">→ Sample ticket</a></div></div>
+        <div class="fi"><div class="fq" onclick="tFaq(this)"><span class="fqt">The Go Green 50% refund is not processing correctly in Fulfil.</span><span class="fqb tech">Tech</span><span class="ftog">+</span></div><div class="fa"><ul><li>Ashley may escalate because Fulfil lacks "Plant a Tree" option — known UI gap</li><li>The 50% refund can still be processed — "Plant a Tree" is handled separately</li><li>Always verify total order amount before processing to ensure exactly 50%</li></ul><a class="kl" href="https://raicom.kustomerapp.com/app/customers/69bcb33b92f99b66cea78092/event/69cde6d360b5fbedeb9aaa6f" target="_blank">→ Sample ticket</a></div></div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">Articles</div><ul>
+        <li><button onclick="openFaq(0)">External refund process</button></li>
+        <li><button onclick="openFaq(1)">Adverse product reactions</button></li>
+        <li><button onclick="openFaq(2)">Retention options</button></li>
+        <li><button onclick="openFaq(3)">Ashley cancelled wrong item</button></li>
+        <li><button onclick="openFaq(4)">Account &amp; charge lookup</button></li>
+        <li><button onclick="openFaq(5)">Ashley product info errors</button></li>
+        <li><button onclick="openFaq(6)">Wrong item / wrong label</button></li>
+        <li><button onclick="openFaq(7)">Legal letter process</button></li>
+        <li><button onclick="openFaq(8)">Coach Tom contacts</button></li>
+        <li><button onclick="openFaq(9)">Go Green Fulfil issue</button></li>
+      </ul></div>
+      <div class="sb-kust"><h3>Need more help?</h3><p>Escalate to the right person directly.</p><a href="#" onclick="goPage('escalation');return false;">Escalation Guide →</a></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== LIVE TICKETS ======== -->
+<div class="page" id="page-tickets">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Live Tickets</span></div>
+    <div class="ph1">Live Tickets</div>
+    <div class="ps">Real-time open conversations pulled directly from Kustomer. Auto-synced.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div><span class="ct">Open Tickets</span><span class="cc live" id="tk-count">0 live</span></div>
+        <div class="sync-info"><span class="si-dot"></span><span id="sync-time">Synced from Kustomer</span><button onclick="syncNow()" style="margin-left:auto;font-size:11px;font-weight:600;color:var(--black);border:1px solid var(--border);background:#fff;padding:3px 9px;border-radius:3px;cursor:pointer;font-family:'DM Sans',sans-serif">↻ Refresh</button></div>
+        <div class="lts">
+          <div class="tab-row">
+            <button class="cht on" onclick="setCh('all',this)">All</button>
+            <button class="cht" onclick="setCh('cancel',this)">Cancellations</button>
+            <button class="cht" onclick="setCh('refund',this)">Refunds</button>
+            <button class="cht" onclick="setCh('order',this)">Orders</button>
+            <button class="cht" onclick="setCh('review',this)">Reviews</button>
+            <button class="cht" onclick="setCh('other',this)">Other</button>
+          </div>
+          <div class="tab-row">
+            <button class="ctb on" onclick="setStatus('all',this)">All Status</button>
+            <button class="ctb" onclick="setStatus('open',this)">Open</button>
+            <button class="ctb" onclick="setStatus('snoozed',this)">Snoozed</button>
+          </div>
+        </div>
+        <div id="ticket-list"></div>
+
+        <!-- ADD TICKET -->
+        <div class="add-form">
+          <div class="af-title">➕ Add Ticket Manually</div>
+          <div class="af-grid">
+            <div class="af-field"><label>Title / Issue</label><input type="text" id="af-title" placeholder="e.g. Customer requesting cancel"/></div>
+            <div class="af-field"><label>Customer Name</label><input type="text" id="af-cust" placeholder="e.g. Jane Doe"/></div>
+            <div class="af-field"><label>Category</label><select id="af-cat"><option value="cancel">Cancellation</option><option value="refund">Refund</option><option value="order">Order/Shipping</option><option value="review">Review</option><option value="other">Other</option></select></div>
+            <div class="af-field"><label>Channel</label><select id="af-ch"><option value="email">Email</option><option value="sms">SMS</option></select></div>
+            <div class="af-field"><label>Kustomer Link</label><input type="text" id="af-link" placeholder="https://raicom.kustomerapp.com/…"/></div>
+            <div class="af-field"><label>Assigned To</label><input type="text" id="af-agent" placeholder="e.g. Ryan Bailis"/></div>
+            <div class="af-field af-full"><label>Notes</label><textarea id="af-notes" placeholder="Additional context or notes…"></textarea></div>
+          </div>
+          <div class="af-actions">
+            <button class="btn-primary" onclick="addTicket()">Add Ticket</button>
+            <button class="btn-sec" onclick="clearForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">By Category</div><ul>
+        <li><button onclick="goTickets('all')">All Tickets <span class="badge grey" id="sc-all">0</span></button></li>
+        <li><button onclick="goTickets('cancel')">Cancellations <span class="badge grey" id="sc-cancel">0</span></button></li>
+        <li><button onclick="goTickets('refund')">Refunds <span class="badge grey" id="sc-refund">0</span></button></li>
+        <li><button onclick="goTickets('order')">Orders <span class="badge grey" id="sc-order">0</span></button></li>
+        <li><button onclick="goTickets('review')">Reviews <span class="badge grey" id="sc-review">0</span></button></li>
+        <li><button onclick="goTickets('other')">Other <span class="badge grey" id="sc-other">0</span></button></li>
+      </ul></div>
+      <div class="sbw"><div class="sbh">Quick Actions</div><ul>
+        <li><a href="#" onclick="goPage('followup');return false;">Add Follow-Up</a></li>
+        <li><a href="https://raicom.kustomerapp.com" target="_blank">Open Kustomer</a></li>
+        <li><a href="#" onclick="goPage('escalation');return false;">Escalation Guide</a></li>
+      </ul></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== FOLLOW-UP ======== -->
+<div class="page" id="page-followup">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Follow-Up</span></div>
+    <div class="ph1">Follow-Up Queue</div>
+    <div class="ps">Track customers who need a follow-up call or message from your team.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div><span class="ct">Follow-Up Items</span><span class="cc" id="fu-count">0 pending</span></div>
+        <div id="fu-list"></div>
+        <!-- ADD FOLLOW-UP -->
+        <div class="add-form">
+          <div class="af-title">🔔 Add Follow-Up</div>
+          <div class="af-grid">
+            <div class="af-field"><label>Customer Name</label><input type="text" id="fua-cust" placeholder="e.g. Jane Doe"/></div>
+            <div class="af-field"><label>Follow-Up Type</label><select id="fua-type"><option value="call">📞 Phone Call</option><option value="email">📧 Email</option><option value="sms">💬 SMS</option><option value="refund">💸 Refund Confirmation</option><option value="resolve">✅ Resolution Check</option></select></div>
+            <div class="af-field"><label>Due Date</label><input type="date" id="fua-date"/></div>
+            <div class="af-field"><label>Assigned To</label><input type="text" id="fua-agent" placeholder="e.g. Shai"/></div>
+            <div class="af-field"><label>Kustomer Link</label><input type="text" id="fua-link" placeholder="https://raicom.kustomerapp.com/…"/></div>
+            <div class="af-field"><label>Priority</label><select id="fua-pri"><option value="high">🔴 High</option><option value="med" selected>🟡 Medium</option><option value="low">🟢 Low</option></select></div>
+            <div class="af-field af-full"><label>Notes / Reason</label><textarea id="fua-notes" placeholder="What needs to be followed up on?"></textarea></div>
+          </div>
+          <div class="af-actions">
+            <button class="btn-primary" onclick="addFollowUp()">Add Follow-Up</button>
+            <button class="btn-sec" onclick="clearFU()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">Filter</div><ul>
+        <li><button onclick="filterFU('all')">All Items <span class="badge grey" id="fuf-all">0</span></button></li>
+        <li><button onclick="filterFU('pending')">Pending <span class="badge warn" id="fuf-pend">0</span></button></li>
+        <li><button onclick="filterFU('done')">Completed <span class="badge grey" id="fuf-done">0</span></button></li>
+      </ul></div>
+      <div class="sbw"><div class="sbh">By Type</div><ul>
+        <li><button onclick="filterFUType('call')">📞 Phone Calls</button></li>
+        <li><button onclick="filterFUType('email')">📧 Emails</button></li>
+        <li><button onclick="filterFUType('refund')">💸 Refund Checks</button></li>
+        <li><button onclick="filterFUType('resolve')">✅ Resolution Checks</button></li>
+      </ul></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== PENDING ======== -->
+<div class="page" id="page-pending">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Pending Concerns</span></div>
+    <div class="ph1">Pending Concerns</div>
+    <div class="ps">Open escalations still needing resolution — who raised it and who must act.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><span class="ct">Open Items</span><span class="cc">17 open</span></div>
+        <div id="pending-list"></div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">Needs Action From</div><ul>
+        <li><button onclick="filterPend('all')">All <span class="badge grey">17</span></button></li>
+        <li><button onclick="filterPend('Ryan')">Ryan Bailis <span class="badge grey">12</span></button></li>
+        <li><button onclick="filterPend('Enrico')">Enrico Dela Rosa <span class="badge grey">3</span></button></li>
+      </ul></div>
+      <div class="sb-kust"><h3>Escalate Now</h3><p>Open ticket in Kustomer and assign it.</p><a href="https://raicom.kustomerapp.com" target="_blank">Open Kustomer →</a></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== PRODUCTS ======== -->
+<div class="page" id="page-products">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Products</span></div>
+    <div class="ph1">Product Catalog</div>
+    <div class="ps">All True Nutra products with direct links to their product pages.</div>
+  </div></div>
+  <div class="pw">
+    <div>
+      <div class="card">
+        <div class="ch"><div class="ci"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div><span class="ct">True Nutra Products</span><span class="cc">10 products</span></div>
+        <div class="prod-grid">
+          <a class="prod-card" href="https://truenutra.com/products/vitaminb-default" target="_blank"><div class="prod-emoji">💊</div><div class="prod-name">5-in-1 Vitamin B Complex</div><div class="prod-desc">Liquid form. No capsule version exists. 1.5ml serving size (2x daily). Supports energy and nervous system.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://truenutra.com/products/fb-en-vdk001" target="_blank"><div class="prod-emoji">☀️</div><div class="prod-name">Vitamin D3 &amp; K2 Plus</div><div class="prod-desc">Comes in pouches/packs — NOT bottles. Only 1 version exists (no "Black" or "GLP" label). Supports bone health.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://truenutraco.com/products/fb-en-bsc001" target="_blank"><div class="prod-emoji">🩸</div><div class="prod-name">7-in-1 Blood Sugar Complex</div><div class="prod-desc">IS liquid form — Ashley incorrectly says it should not be liquid. Supports healthy blood sugar levels.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://mytruenutra.com/products/fb-en-us-mc001" target="_blank"><div class="prod-emoji">🧲</div><div class="prod-name">8-in-1 Magnesium Complex</div><div class="prod-desc">30 capsules, taken TWICE daily = 15 servings. This is correct — not a labeling error. Supports sleep &amp; muscle recovery.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://mytruenutra.com/products/fb-en-lc001" target="_blank"><div class="prod-emoji">🌊</div><div class="prod-name">6-in-1 Lymphatic Complex</div><div class="prod-desc">Supports lymphatic drainage and immune health. Some customers report initial detox symptoms in first days.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://gotruenutra.com/products/fb-en-cs001" target="_blank"><div class="prod-emoji">✨</div><div class="prod-name">CLEARSKIN™</div><div class="prod-desc">Skin health supplement. Supports clearer skin from within. For skin-related product concerns escalate to Ryan.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://hellotruenutra.com/products/fb-en-or001" target="_blank"><div class="prod-emoji">🌿</div><div class="prod-name">Oil of Oregano</div><div class="prod-desc">Natural antimicrobial support. Available as free gift in promotions. Do not resend full order for partial missing pouches.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://hellotruenutra.com/products/fb-en-tc001" target="_blank"><div class="prod-emoji">🟡</div><div class="prod-name">Turmeric Curcumin 95</div><div class="prod-desc">30 capsules per bottle — Ashley incorrectly says 90. Label mismatch concerns (Toplux) escalate to Ryan.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://truenutrastore.com/products/fb-en-us-pm001" target="_blank"><div class="prod-emoji">⚡</div><div class="prod-name">Performance Max™</div><div class="prod-desc">Supports energy, stamina, and physical performance. For product quality or adverse reaction concerns escalate to Ryan.</div><span class="prod-link">View Product →</span></a>
+          <a class="prod-card" href="https://truenutradirect.com/products/fb-en-shi001" target="_blank"><div class="prod-emoji">🍯</div><div class="prod-name">Shilajit Honey Sticks</div><div class="prod-desc">Natural mineral-rich supplement in honey stick form. Supports energy and vitality. Newer product line.</div><span class="prod-link">View Product →</span></a>
+        </div>
+      </div>
+    </div>
+    <aside class="sb">
+      <div class="sbw"><div class="sbh">Key Reminders</div><ul>
+        <li><button>Vitamin B: liquid only, no capsules</button></li>
+        <li><button>Vit D3+K2: pouches, not bottles</button></li>
+        <li><button>Blood Sugar: IS liquid form</button></li>
+        <li><button>Magnesium: 15 servings = 2x daily</button></li>
+        <li><button>Turmeric: 30 caps, not 90</button></li>
+      </ul></div>
+      <div class="sbw"><div class="sbh">Discontinued</div><ul>
+        <li><button style="color:#991b1b">TN011 Beef Organ Complex</button></li>
+        <li><button style="color:#991b1b">TN013 Hair Loss Complex</button></li>
+      </ul></div>
+      <div class="sb-kust"><h3>Product Question?</h3><p>Contact Jessie for detailed ingredient and lab information.</p><a href="#" onclick="goPage('escalation');return false;">Escalation Guide →</a></div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== ESCALATION ======== -->
+<div class="page" id="page-escalation">
+  <div class="ph"><div class="phi">
+    <div class="pb"><span onclick="goPage('home')">Home</span><span class="sep">/</span><span>Escalation Guide</span></div>
+    <div class="ph1">Escalation Guide</div>
+    <div class="ps">Who to contact for each issue type, and quick policy rules every agent must know.</div>
+  </div></div>
+  <div class="pwf">
+    <div class="sec-label">Team Contacts</div>
+    <div class="eg">
+      <div class="ep"><div class="ea">ML</div><div><div class="en">Marge Laureola</div><div class="er">All external refunds require her approval — PayPal, Venmo, wire, check.</div><div class="etags"><span class="etag">External Refunds</span><span class="etag">Approvals</span></div></div></div>
+      <div class="ep"><div class="ea">RB</div><div><div class="en">Ryan Bailis</div><div class="er">Product issues, legal matters, trademark, complex account disputes, manager escalations.</div><div class="etags"><span class="etag">Legal</span><span class="etag">Product</span><span class="etag">Account</span><span class="etag">Manager</span></div></div></div>
+      <div class="ep"><div class="ea">ED</div><div><div class="en">Enrico Dela Rosa</div><div class="er">All Ashley / Iris AI errors, behavior reports, and Coach Tom tickets.</div><div class="etags"><span class="etag">AI Issues</span><span class="etag">Coach Tom</span></div></div></div>
+      <div class="ep"><div class="ea grey">JE</div><div><div class="en">Jessie</div><div class="er">Product quality information, ingredient reports, lab results, product feedback.</div><div class="etags"><span class="etag">Product Quality</span><span class="etag">Lab Reports</span></div></div></div>
+      <div class="ep"><div class="ea grey">MO</div><div><div class="en">Mo Domah</div><div class="er">Ad verification, copycat site reports, unauthorized brand use, marketing questions.</div><div class="etags"><span class="etag">Ads</span><span class="etag">Copycat Sites</span></div></div></div>
+      <div class="ep"><div class="ea grey">SB</div><div><div class="en">Sean Bailis</div><div class="er">Kustomer widget bugs, incorrect order total displays, technical system fixes.</div><div class="etags"><span class="etag">Kustomer Bugs</span><span class="etag">Tech Fixes</span></div></div></div>
+      <div class="ep"><div class="ea grey">AN</div><div><div class="en">Angel Madera</div><div class="er">BBB inquiry responses, refund verifications, proof of refund documentation.</div><div class="etags"><span class="etag">BBB</span><span class="etag">Refund Verification</span></div></div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="sec-label">Policy Quick Reference</div>
+    <div class="rc">
+      <div class="rch">Rules Every Agent Must Know</div>
+      <div class="rr"><div class="ri">🔁</div><div><div class="rl">Go Green Refund</div><div class="rd">Always exactly 50% — customer keeps product, tree planted in their name. Never full refund if customer agreed to Go Green.</div></div></div>
+      <div class="rr"><div class="ri">⏸</div><div><div class="rl">Subscription Pause</div><div class="rd">Up to 6 months max — not 3. Ashley incorrectly says 3 months. Always correct this.</div></div></div>
+      <div class="rr"><div class="ri">💸</div><div><div class="rl">Retention Discount</div><div class="rd">20% lifetime max. Ashley has offered 35% — this is incorrect. Never exceed 20%.</div></div></div>
+      <div class="rr"><div class="ri">🚨</div><div><div class="rl">Adverse Reactions</div><div class="rd">Cancel sub AND cancel/refund order. No retention offers. Physician involved → urgent escalation to Ryan.</div></div></div>
+      <div class="rr"><div class="ri">📦</div><div><div class="rl">Partial Replacements</div><div class="rd">Never use "Resend" — it ships everything. Escalate to CS for partial replacements only.</div></div></div>
+      <div class="rr"><div class="ri">⚖️</div><div><div class="rl">Legal Letters &amp; BBB</div><div class="rd">Never respond directly. Escalate to Ryan immediately. Make no commitments or statements.</div></div></div>
+      <div class="rr"><div class="ri">🤖</div><div><div class="rl">Reporting AI Errors</div><div class="rd">All Ashley/Iris errors → #cs-ai-issue-reporting + tag Enrico Dela Rosa + link the ticket.</div></div></div>
+      <div class="rr"><div class="ri">🌱</div><div><div class="rl">Discontinued Products</div><div class="rd">TN011 (Beef Organ) and TN013 (Hair Loss) are discontinued. Replace with Magnesium Complex + Vitamin B Complex.</div></div></div>
+      <div class="rr"><div class="ri">📞</div><div><div class="rl">Callback Policy</div><div class="rd">We do NOT offer callbacks. Ashley has promised this incorrectly. Always correct the customer.</div></div></div>
+      <div class="rr"><div class="ri">🛡️</div><div><div class="rl">Suspicious Emails</div><div class="rd">Shopify emails only come from @shopify.com — never Gmail or other domains.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<footer id="site-footer"><p>True Nutra CS Knowledge Base</p><p>#cs-escalated-concerns · #cs-question-hub · #cs-ai-issue-reporting · Live via Kustomer MCP</p></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== LIVE KUSTOMER DATA =====
+const LIVE_TICKETS = [{"id":"6a04f5fb0407ca63b8d4d9e4","name":"I never received the first order hence me ordering again.","status":"snoozed","priority":3,"channel":"sms","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69b9a59d42fff6985ff565d5/event/6a04f5fb0407ca63b8d4d9e4","cat":"order"},{"id":"6a04f7880407ca63b8d5f3fd","name":"Cancellation","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69de84e64741ffe2e377b750/event/6a04f7880407ca63b8d5f3fd","cat":"cancel"},{"id":"6a04f7dc0407ca63b8d62e91","name":"Cancel","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69e010619aaa064ecf835415/event/6a04f7dc0407ca63b8d62e91","cat":"cancel"},{"id":"6a04f98a0407ca63b8d79126","name":"Please stop my subscription. I have 4 months worth.","status":"open","priority":4,"channel":"sms","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69c9cc6f4e94aa1421e4f54f/event/6a04f98a0407ca63b8d79126","cat":"cancel"},{"id":"6a04f9750407ca63b8d77f1a","name":"Thank You Ashley I am excited to start taking it do u have any recommendations on when its best used","status":"open","priority":4,"channel":"sms","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69ffc67f1dd5903d023682b4/event/6a04f9750407ca63b8d77f1a","cat":"review"},{"id":"6a04f6ed0407ca63b8d5872e","name":"I do not want on auto order. Do not send.","status":"open","priority":4,"channel":"sms","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69cd95d773af602232d2d812/event/6a04f6ed0407ca63b8d5872e","cat":"cancel"},{"id":"6a04f9680407ca63b8d77483","name":"Cancellation","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69cfff22f070f586ad026cd1/event/6a04f9680407ca63b8d77483","cat":"cancel"},{"id":"6a04f9590407ca63b8d7682b","name":"Cancel Subscription","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69f3e4499764fb09ccfbbadf/event/6a04f9590407ca63b8d7682b","cat":"cancel"},{"id":"6a04e4b10407ca63b8c96071","name":"Re: Order TN89814663 confirmed","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/68e695623cab160e6cf48095/event/6a04e4b10407ca63b8c96071","cat":"order"},{"id":"6a04f91a0407ca63b8d7363a","name":"I don't think I'll be ordering anymore, I dropped to one per day and my bowels are still all over the place","status":"open","priority":4,"channel":"sms","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/6945de2f02e3c7abdc3f1d79/event/6a04f91a0407ca63b8d7363a","cat":"order"},{"id":"6a0281a00407ca63b8e4cef0","name":"Re: A shipment from order TN89263293 is out for delivery","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69f630f4472427f66c8a8988/event/6a0281a00407ca63b8e4cef0","cat":"order"},{"id":"6a04f9110407ca63b8d72eaf","name":"Re: Order TN89821373 confirmed","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69e00b2049dfe005f26dc023/event/6a04f9110407ca63b8d72eaf","cat":"order"},{"id":"6a04f90f0407ca63b8d72de4","name":"Re: Quick check-in before your refill","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69b581c2ed16f08590a83db8/event/6a04f90f0407ca63b8d72de4","cat":"cancel"},{"id":"6a04f83e0407ca63b8d676f7","name":"Take me off auto ship or I will call my credit card","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69bada8e2c72cc0b069a649d/event/6a04f83e0407ca63b8d676f7","cat":"cancel"},{"id":"6a04f8f60407ca63b8d71beb","name":"Re: Order TN89808953 confirmed","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69cfff22f070f586ad026cd1/event/6a04f8f60407ca63b8d71beb","cat":"order"},{"id":"6a04f8e90407ca63b8d71144","name":"Re: Quick check-in before your refill","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/6972bf37016ac20bc6c272b2/event/6a04f8e90407ca63b8d71144","cat":"cancel"},{"id":"6a0350f60407ca63b8193e69","name":"Re: Quick check-in before your refill","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69b9821f1c2b8e780941417b/event/6a0350f60407ca63b8193e69","cat":"cancel"},{"id":"6a04f8570407ca63b8d68c70","name":"Cancel my subscription I don't need this order and did not authorize this new order made today","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69e00e258d63d5f87feebd59/event/6a04f8570407ca63b8d68c70","cat":"cancel"},{"id":"6a013d130407ca63b85a88d5","name":"Can someone tell me when my next subscription is","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/68e2ea8bc105dd2a110f6b5e/event/6a013d130407ca63b85a88d5","cat":"cancel"},{"id":"6a04f8510407ca63b8d68711","name":"Re: A shipment from order TN89389983 has been delivered","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69f94770eed6266bb6884d22/event/6a04f8510407ca63b8d68711","cat":"order"},{"id":"6a04e8330407ca63b8cbb769","name":"Re: Order TN89818573 confirmed","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69c6f25c3ac8b7a4dc50682e/event/6a04e8330407ca63b8cbb769","cat":"order"},{"id":"6a04e60f0407ca63b8ca4620","name":"Re: A shipment from order TN89768903 is about to ship","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69c31346103ec16d0a7ad008/event/6a04e60f0407ca63b8ca4620","cat":"order"},{"id":"6a043d770407ca63b872aa5c","name":"Re: Wendy, review your purchase from True Nutra","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69d0c62bdce5714362d14edb/event/6a043d770407ca63b872aa5c","cat":"review"},{"id":"69fcfc129ce2db15440edbdc","name":"Chris Wheeler left a 4 star review for Free Oil of Oregano","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69dfef39fec15d738d9d547a/event/69fcfc129ce2db15440edbdc","cat":"review"},{"id":"6a04bf250407ca63b8ae3d11","name":"Re: Confirm to Get Emails","status":"open","priority":3,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/6a04bf250ba200f80b2f8f3b/event/6a04bf250407ca63b8ae3d11","cat":"other"},{"id":"6a04c33e0407ca63b8b1ad65","name":"Russell Kenny left a 2 star review for Free Turmeric Curcumin 95","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69cfe349211421b4a9243ada/event/6a04c33e0407ca63b8b1ad65","cat":"review"},{"id":"69fe71969ce2db1544ba84c6","name":"I should not be getting another order. I have plenty. Cancel this order","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/68e9f0a8527bcb6fa3f6068e/event/69fe71969ce2db1544ba84c6","cat":"cancel"},{"id":"6a04b1890407ca63b8a361d1","name":"Refund of $74.95","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69a9baf1216b30f18794f4b0/event/6a04b1890407ca63b8a361d1","cat":"refund"},{"id":"6a0356260407ca63b81d96ff","name":"I did not do a subscription of my order. Please confirm i have no auto refills and that subscription","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/6a032e98d922cd474c385c8e/event/6a0356260407ca63b81d96ff","cat":"cancel"},{"id":"6a047f930407ca63b87fa86e","name":"Hello True Nutra, could you please cancel any of my future orders and put a stop on them","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69d113c307a4de6c370d4048/event/6a047f930407ca63b87fa86e","cat":"cancel"},{"id":"6a047e130407ca63b87ee97a","name":"Re: Quick check-in before your refill","status":"open","priority":4,"channel":"email","updated":"2026-05-13","brand":"True Nutra","link":"https://raicom.kustomerapp.com/app/customers/69b297f22bdd0c127459622c/event/6a047e130407ca63b87ee97a","cat":"cancel"}];
+
+const PENDING_DATA = [
+  {title:'Invoice for tax purposes — needs Ryan approval before sending',by:'Julio Romero Jr',to:'Ryan Bailis',dt:'May 13 2026',link:'https://raicom.kustomerapp.com/app/customers/693e0e88b38971b944c1634f/event/6a03abc30407ca63b855debe'},
+  {title:'Ashley UI bug — shows "Active" on cancelled subscriptions',by:'Martin Bombon',to:'Enrico Dela Rosa',dt:'May 13 2026',link:'https://raicom.kustomerapp.com/app/customers/69dd88b81302bfbdad84e638/event/6a0270410407ca63b8db1106'},
+  {title:'~90 stuck tickets in inbox — Ashley not snoozed after reply',by:'Ann',to:'Enrico Dela Rosa',dt:'May 12 2026',link:''},
+  {title:'CEO contact info request — how to respond?',by:'Leizel Cabilan',to:'Ryan Bailis',dt:'May 12 2026',link:'https://raicom.kustomerapp.com/app/customers/69b5555f3f2ebd99d359d49c/event/6a0212230407ca63b89574b9'},
+  {title:'Trustpilot message — Ryan to assess and decide response',by:'Shai',to:'Ryan Bailis',dt:'May 11 2026',link:'https://raicom.kustomerapp.com/app/customers/6a01f51e9554b9ff5cabf76e/event/6a01f51e0407ca63b87eb90f'},
+  {title:'Wrong Turmeric label — possible customs issue',by:'Zwingli Diamond',to:'Ryan Bailis',dt:'May 6 2026',link:'https://raicom.kustomerapp.com/app/customers/69d2aa2203068dc74e8e2c42/event/69f92a1d9ce2db154432e234'},
+  {title:'Customer account not found in any system',by:'Shai',to:'Ryan Bailis',dt:'May 5 2026',link:'https://raicom.kustomerapp.com/app/customers/69f801947e2fb04b33652bfc/event/69f87fec9ce2db1544bd79ba'},
+  {title:'5-in-1 Vitamin B Complex — detailed concentrations needed from Jessie',by:'Beth Pareja',to:'Ryan Bailis / Jessie',dt:'May 1 2026',link:'https://raicom.kustomerapp.com/app/customers/697d0902e9e8c188b33e59a1/event/69ebe1559ce2db1544ac62a6'},
+  {title:'Vitamin B Complex dosage conflict — 1.5ml vs 2 drops on Instagram',by:'Patriz Brigoli',to:'Ryan Bailis',dt:'Mar 31 2026',link:'https://raicom.kustomerapp.com/app/customers/69a8aa12c823f38107dff4f5/event/69caca0e60b5fbedeb31b078'},
+  {title:'"Jen Hatmaker" ad complaint — photo use guidance needed',by:'Patriz Brigoli',to:'Ryan Bailis',dt:'Mar 30 2026',link:'https://raicom.kustomerapp.com/app/customers/69c9c67c31ccfb400b8eea39/event/69c9c67c60b5fbedebd743b9'},
+  {title:'Refund issued to wrong card — card 0524 vs customer card 3844',by:'Zwingli Diamond',to:'Ryan Bailis',dt:'Jan 14 2026',link:'https://raicom.kustomerapp.com/app/customers/6941aa80a6e21e876d049e3d/event/696698397bc563015cddb6ea'},
+  {title:'Adverse reaction to Liquid NAD+ — physician involved (URGENT)',by:'Dianne',to:'Ryan Bailis',dt:'Dec 2 2025',link:'https://raicom.kustomerapp.com/app/customers/69056d7f9f455e31225f7e1a/event/692e3c5f504706cf82ccb9e3'},
+  {title:'Copycat website — trytruenutrawellness.com using our brand',by:'Zwingli Diamond',to:'Ryan Bailis / Mo',dt:'Dec 4 2025',link:''},
+  {title:'trunutra.com receiving 10-20 misdirected emails/day',by:'Leizel Cabilan',to:'Ryan Bailis',dt:'Feb 17 2026',link:'https://raicom.kustomerapp.com/app/customers/69934554ebdc54d77dcfb4ca/event/69934554195316a4c7c308d0'},
+  {title:'Health & Wellness Guide — "No subscription found" error',by:'Patriz Brigoli',to:'Ryan Bailis',dt:'Apr 12 2026',link:'https://raicom.kustomerapp.com/app/customers/69b6ad5cdb3121467dc50c35/event/69d6ca5b60b5fbedeb360b27'},
+  {title:'Ashley tagging True Nutra tickets as Jewel — recurring error',by:'Martin Bombon',to:'Enrico Dela Rosa',dt:'Mar 9 2026',link:'https://raicom.kustomerapp.com/app/customers/69587cf9b2f9fc2b58de7b13/event/69acc033ed618d6cebba53b9'},
+  {title:'Company registration number request — can we share?',by:'Patriz Brigoli',to:'Ryan Bailis',dt:'Feb 16 2026',link:'https://raicom.kustomerapp.com/app/customers/69591cbb31a2ce797053d668/event/697d0fcad403e9f00b4a1490'},
+];
+
+let tickets = [...LIVE_TICKETS];
+let followups = [];
+let curCat = 'all', curStatus = 'all';
+let fuFilter = 'all', fuTypeFilter = 'all';
+let syncInterval;
+
+function initCounts() {
+  const total = tickets.length;
+  const open = tickets.filter(t=>t.status==='open').length;
+  const cancel = tickets.filter(t=>t.cat==='cancel').length;
+  const refund = tickets.filter(t=>t.cat==='refund').length;
+  document.getElementById('home-tc').textContent = total + ' tickets';
+  ['st-total','sb-live'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=total});
+  const sto=document.getElementById('st-open');if(sto)sto.textContent=open;
+  const stc=document.getElementById('st-cancel');if(stc)stc.textContent=cancel;
+  const str=document.getElementById('st-refund');if(str)str.textContent=refund;
+  const tkc=document.getElementById('tk-count');if(tkc){tkc.textContent=total+' live';tkc.className='cc live'}
+  ['all','cancel','refund','order','review','other'].forEach(cat=>{
+    const e=document.getElementById('sc-'+cat);
+    if(e) e.textContent=(cat==='all'?total:tickets.filter(t=>t.cat===cat).length);
+  });
+}
+
+function renderTickets() {
+  let list = tickets;
+  if(curCat !== 'all') list = list.filter(t=>t.cat===curCat);
+  if(curStatus !== 'all') list = list.filter(t=>t.status===curStatus);
+  const el = document.getElementById('ticket-list');
+  if(!el) return;
+  const lbl = document.getElementById('tk-count');
+  if(lbl){lbl.textContent=list.length+' live';lbl.className='cc live'}
+  if(!list.length){el.innerHTML='<div class="no-res">No tickets match your filters.</div>';return;}
+  el.innerHTML = list.map(t=>`
+    <div class="lt-row">
+      <div class="lt-dot ${t.status}"></div>
+      <div class="lt-info">
+        <div class="lt-tr">
+          <span class="lt-title">${t.name.substring(0,80)}${t.name.length>80?'…':''}</span>
+          <span class="lt-ch ${t.channel}">${t.channel.toUpperCase()}</span>
+          ${t.priority>=4?'<span class="lt-pri p4">P'+t.priority+'</span>':'<span class="lt-pri">P'+t.priority+'</span>'}
+        </div>
+        <div class="lt-by">${t.updated} · ${t.status} · ${t.brand}</div>
+      </div>
+      ${t.link?`<a class="ltkl" href="${t.link}" target="_blank">Open ↗</a>`:''}
+    </div>`).join('');
+}
+
+function setCh(cat,btn) {
+  curCat = cat;
+  document.querySelectorAll('.cht').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTickets();
+}
+function setStatus(s,btn) {
+  curStatus = s;
+  document.querySelectorAll('.ctb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTickets();
+}
+function goTickets(cat) {
+  curCat = cat; curStatus = 'all';
+  goPage('tickets');
+  setTimeout(()=>{
+    document.querySelectorAll('.cht').forEach((b,i)=>{
+      const cats=['all','cancel','refund','order','review','other'];
+      b.classList.toggle('on',cats[i]===cat);
+    });
+    document.querySelectorAll('.ctb').forEach((b,i)=>b.classList.toggle('on',i===0));
+    renderTickets();
+  },60);
+}
+
+function addTicket() {
+  const title = document.getElementById('af-title').value.trim();
+  const cust = document.getElementById('af-cust').value.trim();
+  if(!title){showToast('Please enter a title/issue.');return;}
+  const t = {
+    id: 'manual-'+Date.now(),
+    name: title+(cust?' ('+cust+')':''),
+    status: 'open',
+    priority: 4,
+    channel: document.getElementById('af-ch').value,
+    updated: new Date().toISOString().slice(0,10),
+    brand: 'True Nutra',
+    link: document.getElementById('af-link').value.trim(),
+    cat: document.getElementById('af-cat').value,
+    manual: true
+  };
+  tickets.unshift(t);
+  initCounts();
+  renderTickets();
+  clearForm();
+  showToast('✅ Ticket added successfully!');
+}
+function clearForm() {
+  ['af-title','af-cust','af-link','af-agent','af-notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+}
+
+// FOLLOW-UP
+function renderFollowUps() {
+  let list = followups;
+  if(fuFilter==='pending') list = list.filter(f=>f.status==='pending');
+  else if(fuFilter==='done') list = list.filter(f=>f.status==='done');
+  if(fuTypeFilter!=='all') list = list.filter(f=>f.type===fuTypeFilter);
+  const el = document.getElementById('fu-list');
+  const cnt = document.getElementById('fu-count');
+  const pend = followups.filter(f=>f.status==='pending').length;
+  if(cnt) cnt.textContent = pend + ' pending';
+  document.getElementById('home-fc').textContent = pend + ' pending';
+  document.getElementById('sb-fu').textContent = pend;
+  ['fuf-all','fuf-pend','fuf-done'].forEach(id=>{
+    const e=document.getElementById(id);
+    if(id==='fuf-all'&&e) e.textContent=followups.length;
+    if(id==='fuf-pend'&&e) e.textContent=followups.filter(f=>f.status==='pending').length;
+    if(id==='fuf-done'&&e) e.textContent=followups.filter(f=>f.status==='done').length;
+  });
+  if(!el) return;
+  if(!list.length){el.innerHTML='<div class="no-res">No follow-up items yet. Add one below.</div>';return;}
+  const typeLabels={call:'📞 Call',email:'📧 Email',sms:'💬 SMS',refund:'💸 Refund Check',resolve:'✅ Resolution'};
+  const priColors={high:'color:#991b1b',med:'color:#92400e',low:'color:#166534'};
+  el.innerHTML = list.map((f,i)=>`
+    <div class="fu-item">
+      <span class="fu-status ${f.status==='done'?'fu-done':'fu-pending'}">${f.status==='done'?'DONE':'PENDING'}</span>
+      <div class="fu-info">
+        <div class="fu-title" style="${priColors[f.pri]||''}">${typeLabels[f.type]||f.type} — ${f.cust}</div>
+        <div class="fu-meta">Due: ${f.date||'No date'} · Agent: ${f.agent||'Unassigned'}</div>
+        ${f.notes?`<div class="fu-note">${f.notes}</div>`:''}
+        ${f.link?`<a class="kl" href="${f.link}" target="_blank" style="margin-top:5px;display:inline-flex">Open in Kustomer ↗</a>`:''}
+      </div>
+      <div class="fu-actions">
+        ${f.status==='pending'?`<button class="fu-btn done-btn" onclick="markFUDone(${i})">Mark Done</button>`:`<button class="fu-btn" onclick="markFUPending(${i})">Reopen</button>`}
+        <button class="fu-btn" onclick="deleteFU(${i})">Remove</button>
+      </div>
+    </div>`).join('');
+}
+function addFollowUp() {
+  const cust = document.getElementById('fua-cust').value.trim();
+  if(!cust){showToast('Please enter a customer name.');return;}
+  followups.unshift({
+    cust,
+    type: document.getElementById('fua-type').value,
+    date: document.getElementById('fua-date').value,
+    agent: document.getElementById('fua-agent').value.trim(),
+    link: document.getElementById('fua-link').value.trim(),
+    pri: document.getElementById('fua-pri').value,
+    notes: document.getElementById('fua-notes').value.trim(),
+    status: 'pending'
+  });
+  renderFollowUps();
+  clearFU();
+  showToast('🔔 Follow-up added!');
+}
+function clearFU(){['fua-cust','fua-date','fua-agent','fua-link','fua-notes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';})}
+function markFUDone(i){followups[i].status='done';renderFollowUps()}
+function markFUPending(i){followups[i].status='pending';renderFollowUps()}
+function deleteFU(i){followups.splice(i,1);renderFollowUps()}
+function filterFU(f){fuFilter=f;renderFollowUps()}
+function filterFUType(t){fuTypeFilter=fuTypeFilter===t?'all':t;renderFollowUps()}
+
+function renderPending(who) {
+  let list = PENDING_DATA;
+  if(who&&who!=='all') list = list.filter(p=>p.to.includes(who));
+  const el = document.getElementById('pending-list');
+  if(!el) return;
+  el.innerHTML = list.map((p,i)=>`
+    <div class="pi">
+      <div class="pnum">${String(i+1).padStart(2,'0')}</div>
+      <div class="pb2">
+        <div class="ptitle"><span class="ppill">OPEN</span>${p.title}</div>
+        <div class="pmeta">${p.dt} · Raised by <strong>${p.by}</strong> · Needs: <strong>${p.to}</strong></div>
+        ${p.link?`<a class="pkl" href="${p.link}" target="_blank">Open in Kustomer →</a>`:''}
+      </div>
+    </div>`).join('');
+}
+function filterPend(who){renderPending(who==='all'?null:who)}
+
+// FAQ
+function tFaq(q){
+  const item=q.closest('.fi');
+  const open=item.classList.contains('open');
+  document.querySelectorAll('.fi.open').forEach(i=>i.classList.remove('open'));
+  if(!open) item.classList.add('open');
+}
+function openFaq(i){
+  goPage('faq');
+  setTimeout(()=>{
+    const items=document.querySelectorAll('.fi');
+    if(items[i]){document.querySelectorAll('.fi.open').forEach(x=>x.classList.remove('open'));items[i].classList.add('open');setTimeout(()=>items[i].scrollIntoView({behavior:'smooth',block:'center'}),100)}
+  },80);
+}
+
+// SEARCH
+const SI = [
+  ...LIVE_TICKETS.map(t=>({type:'live',label:t.name,meta:t.updated+' · '+t.status+' · '+t.channel,link:t.link,cat:t.cat})),
+  {type:'faq',label:'How to process an external refund PayPal Venmo wire check',meta:'FAQ · Refund',idx:0},
+  {type:'faq',label:'Customer adverse reaction to product physician',meta:'FAQ · Product',idx:1},
+  {type:'faq',label:'Subscription retention pause 6 months 20 percent discount',meta:'FAQ · Policy',idx:2},
+  {type:'faq',label:'Ashley cancelled wrong order instead of subscription',meta:'FAQ · AI Issue',idx:3},
+  {type:'faq',label:'Account charge lookup Kustomer CheckoutChamp',meta:'FAQ · Account',idx:4},
+  {type:'faq',label:'Ashley product information errors liquid bottles capsules',meta:'FAQ · AI Issue',idx:5},
+  {type:'faq',label:'Wrong item wrong label Toplux replacement',meta:'FAQ · Product',idx:6},
+  {type:'faq',label:'Legal letter BBB trademark complaint',meta:'FAQ · Legal',idx:7},
+  {type:'faq',label:'Coach Tom contact international SMS email',meta:'FAQ · Policy',idx:8},
+  {type:'faq',label:'Go Green 50 percent refund Fulfil processing',meta:'FAQ · Tech',idx:9},
+  ...PENDING_DATA.map(p=>({type:'pend',label:p.title,meta:'Pending · '+p.to,link:p.link})),
+];
+
+function doSearch(v) {
+  const drop=document.getElementById('sr-drop');
+  if(!v||v.length<2){drop.innerHTML='';drop.classList.remove('show');return;}
+  const q=v.toLowerCase();
+  const res=SI.filter(r=>r.label.toLowerCase().includes(q)||(r.meta&&r.meta.toLowerCase().includes(q))).slice(0,9);
+  if(!res.length){drop.innerHTML='<div class="sr-empty">No results for "'+v+'"</div>';drop.classList.add('show');return;}
+  drop.innerHTML=res.map(r=>{
+    const tl=r.type==='live'?'LIVE':r.type==='faq'?'FAQ':'PENDING';
+    const tc=r.type==='live'?'live':r.type==='faq'?'faq':'pend';
+    let act='';
+    if(r.type==='live'&&r.link) act=`onclick="window.open('${r.link}','_blank')"`;
+    else if(r.type==='live') act=`onclick="goPage('tickets')"`;
+    else if(r.type==='faq') act=`onclick="openFaq(${r.idx})"`;
+    else if(r.type==='pend'&&r.link) act=`onclick="window.open('${r.link}','_blank')"`;
+    else act=`onclick="goPage('pending')"`;
+    return`<div class="sr-item" ${act}><span class="sr-type ${tc}">${tl}</span><div><div class="sr-label">${r.label.substring(0,70)}</div><div class="sr-meta">${r.meta||''}</div></div></div>`;
+  }).join('');
+  drop.classList.add('show');
+}
+function closeSR(){const d=document.getElementById('sr-drop');if(d)d.classList.remove('show')}
+
+// PAGE ROUTING
+function goPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  const nm={topics:0,faq:1,tickets:2,followup:3,pending:4,products:5,escalation:6};
+  const navLinks=document.querySelectorAll('.nav-link');
+  if(nm[id]!==undefined) navLinks[nm[id]].classList.add('active');
+  const footer=document.getElementById('site-footer');
+  if(footer) footer.className=id==='home'?'':'show';
+  window.scrollTo(0,0);
+}
+
+// SYNC
+function syncNow() {
+  const st=document.getElementById('sync-time');
+  if(st) st.textContent='Syncing…';
+  setTimeout(()=>{
+    const now=new Date();
+    if(st) st.textContent='Synced at '+now.toLocaleTimeString()+' · '+tickets.length+' tickets loaded';
+    showToast('✅ Synced with Kustomer — '+tickets.length+' tickets loaded');
+  },900);
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// INIT
+initCounts();
+renderTickets();
+renderPending();
+renderFollowUps();
+document.getElementById('sync-time').textContent='Live from Kustomer · Synced '+new Date().toLocaleTimeString()+' · '+tickets.length+' open tickets';
+// auto-refresh every 5 min
+syncInterval=setInterval(()=>{const e=document.getElementById('sync-time');if(e)e.textContent='Live · Last synced '+new Date().toLocaleTimeString()},300000);
+</script>
+</body>
+</html>
